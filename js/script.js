@@ -30,7 +30,13 @@
 
   GithubPage2Repo.prototype.validate = function() {
     var isValid = false;
-    if ( !location.hostname.match(/github\./) ) {
+
+    var domainBlacklist = ['gist', 'help', 'developer', 'status', 'training', 'shop'];
+    var dirBlacklist = ['explore', 'blog', 'settings', 'organizations', 'notifications', 'new', 'site', 'contact', 'about'];
+
+    if ( !location.hostname.match(/github\./)
+      || domainBlacklist.indexOf(location.hostname.split('.')[0]) !== -1
+      || (location.hostname.match(/github\.com/) && dirBlacklist.indexOf(location.pathname.split('/')[1]) !== -1) ) {
       return false;
     }
 
@@ -38,8 +44,10 @@
       switch ( location.hostname.match(/github\.io|github\.com/)[0] ) {
         case 'github.io':
           return 'page';
-        default:
+        case 'github.com':
           return 'repo';
+        default:
+          return null;
       }
     }());
 
@@ -51,7 +59,7 @@
   };
 
   GithubPage2Repo.prototype.mount = function() {
-    var url= location.protocol + '//';
+    var url = location.protocol + '//';
 
     if (this.type === 'page') {
       this.handle = location.hostname.split('.')[0];
@@ -61,13 +69,23 @@
 
     } else {
       var splitPath = location.pathname.split('/');
-      this.handle = splitPath[1];
-      this.repo = (location.hostname.match(/github\.com/) && !(location.pathname.split('/').length > 2)) ? '' : splitPath[2];
 
-      if ( this.repo.match(/\.github\.io/) ) {
-        url += this.repo;
-      } else {
-        url += ( this.handle + '.github.io/' + this.repo );
+      this.handle = splitPath[1];
+      this.repo = location.pathname.split('/').length > 2 ? splitPath[2] : '';
+
+      if (!this.handle) {
+        if (location.hostname.split('.')[0] === 'pages') {
+          url += 'github.com';
+        } else {
+          url += 'pages.github.com'
+        }
+      }
+      else {
+        if ( this.repo.match(this.handle + '.github.io') ) {
+          url += this.repo;
+        } else {
+          url += ( this.handle + '.github.io/' + this.repo );
+        }
       }
     }
 

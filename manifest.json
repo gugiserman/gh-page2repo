@@ -9,10 +9,7 @@
       "js/script.js"
     ],
     "matches": [
-      "http://github.com/*",
-      "https://github.com/*",
-      "http://*.github.io/*",
-      "https://*.github.io/*"
+      "<all_urls>"
     ]
   }],
   "background": {

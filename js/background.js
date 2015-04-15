@@ -3,6 +3,7 @@
   var tabs = [];
 
   chrome.runtime.onMessage.addListener(function(request, sender) {
+    if ( request.type !== 'ghp2r.updateUrl' ) return;
     for (var i = 0; i < tabs.length; i++) {
       if (tabs[i].id === sender.tab.id) {
         tabs[i].url = request.url;

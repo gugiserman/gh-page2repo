@@ -1,5 +1,12 @@
 (function() {
 
+  function UpdateURLMessage(data) {
+    data = data || {};
+
+    this.url = data.url ? data.url : null;
+    this.type = 'ghp2r.updateUrl';
+  }
+
   function GithubPage2Repo() {
     this.isValid = false;
     this.isActive = false;
@@ -68,11 +75,11 @@
   };
 
   GithubPage2Repo.prototype.enable = function() {
-    chrome.runtime.sendMessage({ url: this.url });
+    chrome.runtime.sendMessage( new UpdateURLMessage({ url: this.url }) );
   };
 
   GithubPage2Repo.prototype.disable = function() {
-    chrome.runtime.sendMessage({ url: null });
+    chrome.runtime.sendMessage( new UpdateURLMessage() );
   };
 
   return new GithubPage2Repo();
